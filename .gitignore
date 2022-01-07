@@ -1,0 +1,4 @@
+/vendor/
+*.pid
+*.log
+/.env

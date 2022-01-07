@@ -1,0 +1,25 @@
+{
+    "name": "mrtwenty/flower",
+    "description": "Message Queue Redis Stream",
+	"type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "mrtwenty",
+            "email": "mrtwenty@foxmail.com"
+        }
+    ],
+	"require": {
+		"php": ">=7.2",
+        "workerman/workerman": "^4.0",
+        "mrtwenty/flower-client": "^0.0.1"
+	},
+	"autoload": {
+        "psr-4": {
+            "app\\": "app/"
+        },
+        "files": [
+            "app/helper.php"
+        ]
+    }
+}
