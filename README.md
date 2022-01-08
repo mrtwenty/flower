@@ -5,7 +5,7 @@ FlowerMQ 一个基于Workerman和Redis实现的消息队列,一个小小工具�
 ## 运行依赖
 
 - php7.2
-- Redis5上，因为用到Redis Stream
+- Redis版本需要在`5.0.4`上，因为用到Redis Stream和其中的xclaim命令
 - pecl依赖，redis扩展
 - composer依赖，workerman/workerman 4.0以上
 
