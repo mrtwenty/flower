@@ -84,7 +84,7 @@ class Flower
         $fail_list       = $this->mq['fail_list']; //失败列表名
 
         //读取未确认的消息
-        $pending = $this->redis->xPending($mq_name, $group_name, '-', '+', 1);
+        $pending = $this->redis->xPending($mq_name, $group_name, '-', '+', 100);
         if (empty($pending)) {
             return;
         }
