@@ -24,14 +24,13 @@ composer create-project mrtwenty/flower
 
 ## 原理说明
 
-1. php的workerman实现消费端，开启多个进程，在 onWorkerStart 函数里面，阻塞读取，阻塞间隔5秒后，就重新阻塞，
-2. 因为是阻塞了，所以用了一个字符串key来处理停止的问题，每次阻塞5秒，就断开，就判断是否需要终止程序。
+1. workerman实现消费端，开多个进程，在 onWorkerStart 函数里面，阻塞读取，阻塞间隔5秒后，就重新阻塞,因为是阻塞了，所以用了一个字符串key来处理停止的问题，每次阻塞5秒，就断开，以便判断是否需要终止程序。
 3. 可以随时停止消费端，因为客户端发送的消息都会存放redis stream 队列里面。
 4. 一个pending进程,每隔1秒检查是否有未ack的消息，并尝试消费掉
 5. 一个delay进程,负责处理延迟消息，利用redis的zset有序集合存储，起一个定时器，定时获取可以执行的消息，写入消费端
 6. 遵循约定大于配置的方式，直接用默认的即可。
 7. 默认配置是app目录下的config目录，如果需要更改配置项，可以在项目根目录下，提供一个.env的配置文件，替换掉
-8. **警告**: xtrim回收机制，可能会导致消息未消费而被裁剪，所以你应该根据自己的应用场景，进行思考，例如关闭xtrim，或者直接设置mq长度足够长。(谢谢网友提醒)
+8. **警告**: 系统附带的回收机制，使用了`xtrim命令`裁剪消息长度，可能会导致消息未消费而被裁剪，所以你应该根据自己的应用场景，进行思考，例如关闭回收机制，或者直接设置mq长度足够长。(谢谢网友提醒)
 
 ### 可用命令
 
@@ -178,11 +177,10 @@ class Run implements BaseInterface
 
 ### 相关资料
 
-1. [redis stream 手册](http://www.redis.cn/commands/xack.html)
-
-2. [pecl redis 文档](https://github.com/phpredis/phpredis)
-
-3. [workerman 手册](https://www.workerman.net/doc/workerman/)
+1. [redis stream 手册](https://redis.io/commands/xack)  是redis stream命令的详细介绍。
+2. [redis streams简介](https://redis.io/topics/streams-intro)  是redis官网关于redis stream的介绍，在使用该项目前，建议详细阅读它。
+3. [pecl redis 文档](https://github.com/phpredis/phpredis)，  如何使用php操作redis的文档
+4. [workerman 手册](https://www.workerman.net/doc/workerman/)
 
 ### 引用
 1. [monitor登录页模板](https://gitee.com/suiboyu/front_page_effect_collection)
