@@ -11,7 +11,7 @@ use Flower\Client;
  */
 class Flower
 {
-    const VERSION = '0.0.1';
+    const VERSION = '0.0.2';
 
     protected $redis;
     protected $redisVersion;
