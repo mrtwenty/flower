@@ -5,7 +5,7 @@ FlowerMQ 一个基于Workerman和Redis实现的消息队列,一个小小工具�
 ## 运行依赖
 
 - php7.2
-- Redis版本需要在`5.0.4`上，因为用到Redis Stream和其中的xclaim命令
+- Redis版本需要在`5.0.4`上，因为用到Redis的Stream数据类型
 - pecl依赖，redis扩展
 - composer依赖，workerman/workerman 4.0以上
 
@@ -30,7 +30,11 @@ composer create-project mrtwenty/flower
 5. 一个delay进程,负责处理延迟消息，利用redis的zset有序集合存储，起一个定时器，定时获取可以执行的消息，写入消费端
 6. 遵循约定大于配置的方式，直接用默认的即可。
 7. 默认配置是app目录下的config目录，如果需要更改配置项，可以在项目根目录下，提供一个.env的配置文件，替换掉
-8. **警告**: 系统附带的回收机制，使用了`xtrim命令`裁剪消息长度，可能会导致消息未消费而被裁剪，所以你应该根据自己的应用场景，进行思考，例如关闭回收机制，或者直接设置mq长度足够长。(谢谢网友提醒)
+7. 回收裁剪机制: 有三种模式，默认 **no** ，不做裁剪
+   1. no,不做裁剪，所有消息保留。
+   2. maxlen, 最大长度回收,概率性触发 `xtrim  maxlen mq ~ 长度` 。
+   3. minid,    最小已读消息回收，概率行触发，`xtrim minid mq ~ 消息id` ，需要 redis server 6.2.0 以上。
+
 
 ### 可用命令
 
@@ -174,6 +178,10 @@ class Run implements BaseInterface
 由于是守护进程，为了避免php业务代码bug隐藏的内存泄露，可以在消费者执行完一定数量的时候重启进程。具体实现请查看workerman手册。
 
 [链接1](https://www.workerman.net/doc/workerman/worker/stop-all.html)、[链接2](https://www.workerman.net/doc/workerman/faq/max-requests.html)
+#### 3. 失败重试不会触发
+
+请检查redis server的版本，注意是5.0.4 及以上，[5.0.3有个xClaim的bug](https://github.com/redis/redis/commit/f72f4ea311d31f7ce209218a96afb97490971d39)
+
 
 ### 相关资料
 

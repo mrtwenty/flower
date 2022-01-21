@@ -29,7 +29,8 @@ return [
             'consumer_num'    => (int)env('mq.consumer_num', 8),      # 消费进程
             'try_fail_num'    => (int)env('mq.try_fail_num', 3),      # 失败尝试次数
             'try_fail_second' => (int)env('mq.try_fail_second', 6),   # 失败后隔多少秒重试
-            'maxlen'          => (int)env('mq.maxlen', 100000),        # 最大队列长度
+            'maxlen'          => (int)env('mq.maxlen', 100000),       # 最大队列长度
+            'gc_mode'         => env('mq.gc_mode', 'no'),             # 模式: no(不回收)、maxlen(最大长度回收)、minid(最小已消费回收 redis6.2)
             'gc_probability'  => (int)env('mq.gc_probability', 1),    # gc_probability/gc_divisor 概率
             'gc_divisor'      => (int)env('mq.gc_divisor', 10000),
         ],

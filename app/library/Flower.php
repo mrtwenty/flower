@@ -14,6 +14,7 @@ class Flower
     const VERSION = '0.0.1';
 
     protected $redis;
+    protected $redisVersion;
     protected $client;
     protected $mq;
 
@@ -22,6 +23,10 @@ class Flower
         $this->redis = $redis;
         $this->client = $client;
         $this->mq = $mq;
+
+        //获取到redis server的版本
+        $server = $redis->info('server');
+        $this->redisVersion = $server['redis_version'];
     }
 
     /**
@@ -257,22 +262,32 @@ class Flower
 
     /**
      * 修剪mq队列长度,近似修剪，避免长度太长，内存撑爆，概率触发
-     *
-     * @param bool $real 传递参数true会实时触发xtrim命令
      * @return void
      */
-    public function trim($real = false)
+    public function trim()
     {
-        $is_run = true;
-        if ($real === false) {
-            $is_run = $this->isGc();
+        $mode = $this->mq['gc_mode'];
+
+        if ('no' === $mode) {
+            return false;
         }
 
-        if ($is_run) {
+        $is_run = $this->isGc();
+        if (!$is_run) {
+            return false;
+        }
+
+        if ('maxlen' === $mode) {
             $mq_name = $this->mq['name'];
             $mq_maxlen = $this->mq['maxlen'];
             return $this->redis->xtrim($mq_name, $mq_maxlen, true);
         }
+
+        if ('minid' === $mode) {
+            $minid = new Minid($this->redis, $this->redisVersion, $this->mq['name']);
+            return $minid->gc();
+        }
+
         return false;
     }
 
