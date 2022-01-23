@@ -19,6 +19,18 @@ return [
         'username' => env('monitor.username', 'admin'),
         'password' => env('monitor.password', '123456'),
     ],
+    # 公共配置
+    'flower_common' => [
+        'status_driver'   => 'redis', # redis、shmop, 通信驱动标识
+        'consumer_num'    => 8,       # 消费进程数量
+        'try_fail_num'    => 3,       # 失败尝试次数
+        'try_fail_second' => 6,       # 失败后隔多少秒重试
+        'maxlen'          => 100000,  # 最大队列长度
+        'gc_mode'         => 'no',    # 模式: no(不回收)、maxlen(最大长度回收)、minid(最小已消费回收 redis6.2)
+        'gc_probability'  => 1,       # gc_probability/gc_divisor 概率
+        'gc_divisor'      => 10000,
+    ],
+    # 各个MQ的配置，可以覆盖公共配置
     'flower' => [
         'mq' => [
             'name'            => env('mq.name', 'mq'),                # 消息队列名
@@ -26,13 +38,7 @@ return [
             'fail_list'       => env('mq.fail_list', 'mq_fail_list'), # 尝试多次后,记录到失败的队列
             'delay_name'      => env('mq.delay_name', 'mq_delay'),    # 延迟队列名
             'group_name'      => env('mq.group_name', 'mq_group'),    # 消费组名
-            'consumer_num'    => (int)env('mq.consumer_num', 8),      # 消费进程
-            'try_fail_num'    => (int)env('mq.try_fail_num', 3),      # 失败尝试次数
-            'try_fail_second' => (int)env('mq.try_fail_second', 6),   # 失败后隔多少秒重试
-            'maxlen'          => (int)env('mq.maxlen', 100000),       # 最大队列长度
-            'gc_mode'         => env('mq.gc_mode', 'no'),             # 模式: no(不回收)、maxlen(最大长度回收)、minid(最小已消费回收 redis6.2)
-            'gc_probability'  => (int)env('mq.gc_probability', 1),    # gc_probability/gc_divisor 概率
-            'gc_divisor'      => (int)env('mq.gc_divisor', 10000),
+            'gc_divisor'      => (int)env('mq.gc_divisor', 10001),    # 尝试替换公共配置
         ],
     ],
 ];
