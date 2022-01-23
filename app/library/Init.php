@@ -129,8 +129,13 @@ class Init
      */
     public function delay()
     {
-        $redis_config = $this->redisConfig;
         $mq           = $this->mq;
+        //如果设置delay_name 为空，表示不启用延迟队列
+        if (empty($mq['delay_name'])) {
+            return;
+        }
+
+        $redis_config = $this->redisConfig;
         $worker       = new Worker();
         $worker->name = 'delay';
 
