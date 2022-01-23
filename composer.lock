@@ -4,24 +4,30 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8d3c1bf3c57e997928ee77aa73241910",
+    "content-hash": "c702c24259e6cc363b0c6ba02220289e",
     "packages": [
         {
             "name": "mrtwenty/flower-client",
-            "version": "0.0.1",
+            "version": "0.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mrtwenty/flower-client.git",
-                "reference": "ccf58a2c12f7dba48e06cd93e0fb5e835bb092ac"
+                "reference": "3108b5e2e400fc0e9963edb6cf06a05955921c2d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mrtwenty/flower-client/zipball/ccf58a2c12f7dba48e06cd93e0fb5e835bb092ac",
-                "reference": "ccf58a2c12f7dba48e06cd93e0fb5e835bb092ac",
-                "shasum": ""
+                "url": "https://api.github.com/repos/mrtwenty/flower-client/zipball/3108b5e2e400fc0e9963edb6cf06a05955921c2d",
+                "reference": "3108b5e2e400fc0e9963edb6cf06a05955921c2d",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
             },
             "require": {
-                "php": ">=7.2.5"
+                "php": ">=7.2"
             },
             "type": "library",
             "autoload": {
@@ -42,9 +48,9 @@
             "description": "flower message queue client",
             "support": {
                 "issues": "https://github.com/mrtwenty/flower-client/issues",
-                "source": "https://github.com/mrtwenty/flower-client/tree/0.0.1"
+                "source": "https://github.com/mrtwenty/flower-client/tree/0.0.2"
             },
-            "time": "2022-01-03T06:35:18+00:00"
+            "time": "2022-01-23T09:24:46+00:00"
         },
         {
             "name": "workerman/workerman",
