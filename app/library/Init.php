@@ -8,6 +8,7 @@ use app\library\Flower;
 use Flower\Client;
 use Workerman\Timer;
 use Workerman\Worker;
+use app\library\Status;
 
 /**
  * 初始化类
@@ -25,7 +26,7 @@ class Init
 
         $this->run         = $run;
         $this->redisConfig = $redis_config;
-        $this->mq          = $mq;
+        $this->mq          = $mq + config('flower_common');
 
         $temp = $mq['name'];
 
@@ -59,19 +60,25 @@ class Init
         $run          = $this->run;
         $redis_config = $this->redisConfig;
         $mq           = $this->mq;
+
+        //标记启动
+        $status = new Status($mq, $redis_config);
+        $status->start();
+
+        //启动多个消费者
         $worker       = new Worker();
         $worker->name = 'consumer';
 
         // 启动n个进程对外提供服务
         $worker->count = $mq['consumer_num'];
-
         $worker->onWorkerStart = function ($worker) use ($run, $redis_config, $mq) {
 
-            $redis    = redis($redis_config);
+            $status   = new Status($mq, $redis_config, 'slave');
+            $redis    = redis($redis_config, 'slave');
             $client   = new Client($redis, $mq);
             $flower   = new Flower($redis, $mq, $client);
             $consumer = 'consumer-' . $worker->id; //消费者
-            $flower->start($consumer, $run);
+            $flower->start($consumer, $run, $status);
         };
 
         if ($this->isLinux) {
@@ -82,9 +89,8 @@ class Init
             if (function_exists('sapi_windows_set_ctrl_handler')) {
                 sapi_windows_set_ctrl_handler(function () {
                     //设置为stop
-                    $redis  = redis($this->redisConfig);
-                    $flower = new Flower($redis, $this->mq);
-                    $flower->stop();
+                    $status = new Status($this->mq, $this->redisConfig);
+                    $status->stop();
                     exit;
                 });
             }
@@ -171,19 +177,18 @@ class Init
      */
     public function stop()
     {
-        $redis  = redis($this->redisConfig);
-        $flower = new Flower($redis, $this->mq);
-        $flower->stop();
+        $status = new Status($this->mq, $this->redis_config);
+        $status->stop();
         // 运行worker
         Worker::runAll();
     }
 
     /**
-     * 查看当前配置信息
+     * 查看配置信息
      */
     public function config()
     {
-        print_r($this->config);
+        print_r(config());
     }
 
     public function test()

@@ -52,18 +52,19 @@ function config(string $key = null, $default = null)
  * redis实例
  *
  * @param array $config 
+ * @param string $key     master、slave 
  */
-function redis($config)
+function redis($config, $key = 'slave')
 {
-    static $static_redis = null;
+    static $static_redis = [];
 
-    if ($static_redis) {
-        return $static_redis;
+    if (isset($static_redis[$key])) {
+        return $static_redis[$key];
     }
 
     //判断某个扩展名是否在其中
     if (!extension_loaded('redis')) {
-        throw new \Exception("redis extend no found", 1);
+        throw new \Exception("redis extension no found", 1);
     }
 
     $redis_host = $config['host'];
@@ -88,7 +89,7 @@ function redis($config)
 
     //选择数据库
     $redis->select($redis_db);
-    $static_redis = $redis;
+    $static_redis[$key] = $redis;
     return $redis;
 }
 

@@ -21,7 +21,7 @@ return [
     ],
     # 公共配置
     'flower_common' => [
-        'status_driver'   => 'redis', # redis、shmop, 通信驱动标识
+        'status_driver'   => 'file',  # file,shmop,redis 通信驱动标识
         'consumer_num'    => 8,       # 消费进程数量
         'try_fail_num'    => 3,       # 失败尝试次数
         'try_fail_second' => 6,       # 失败后隔多少秒重试

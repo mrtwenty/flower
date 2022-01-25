@@ -32,14 +32,10 @@ class Flower
     /**
      * 启动
      */
-    public function start($consumer, BaseInterface $run)
+    public function start($consumer, BaseInterface $run, Status $status)
     {
         $mq_name    = $this->mq['name']; //消息队列名
-        $mq_status  = $this->mq['status']; //状态
         $group_name = $this->mq['group_name']; //分组名
-
-        //标识启动
-        $this->redis->set($mq_status, 'start');
 
         //先创建，这是为了避免还未创建stream，就使用xgroup
         $this->client->add('init');
@@ -50,7 +46,7 @@ class Flower
         while (true) {
 
             //判断是否需要停止
-            if ('stop' === $this->redis->get($mq_status)) {
+            if ('stop' === $status->status()) {
                 break;
             }
 
@@ -196,27 +192,22 @@ class Flower
     }
 
     /**
-     * 设置停止
-     */
-    public function stop()
-    {
-        $mq_status  = $this->mq['status']; //状态
-        return $this->redis->set($mq_status, 'stop');
-    }
-
-    /**
      * 查看消息队列的运行情况
      *
      * @return array
      */
     public function info()
     {
-        $mq_status  = $this->mq['status']; //状态
+        //状态
+        $status     = new Status($this->mq, $this->redisConfig);
+        $status_val = $status->status();
+
+
         $mq_name    = $this->mq['name']; //消息队列名
         $fail_list  = $this->mq['fail_list'];
         $delay_name = $this->mq['delay_name'];
 
-
+        //stream
         $mq_info        = $this->redis->xinfo('stream', $mq_name);
         $group_info     = $this->redis->xinfo('groups', $mq_name);
         $consumers_info = [];
@@ -252,15 +243,15 @@ class Flower
 
         return [
             'mq_name'        => $mq_name,
-            'mq_status'      => $this->redis->get($mq_status), //mq状态
-            'mq_info'        => $mq_info, //消息队列基本信息
-            'mq_len'         => $this->redis->xlen($mq_name),
-            'group_info'     => $group_info, //分组信息
-            'consumers_info' => $consumers_info, //消费者信息
+            'mq_status'      => $status_val,
+            'mq_info'        => $mq_info,                         //消息队列基本信息
+            'mq_len'         => $this->redis->xlen($mq_name),     //
+            'group_info'     => $group_info,                      //分组信息
+            'consumers_info' => $consumers_info,                  //消费者信息
             'mq_delay_len'   => $this->redis->zCard($delay_name), //延迟队列存放的数据长度
-            'mq_delay_10'    => $mq_delay_10, //最先执行的10个数据
-            'fail_list_len'  => $this->redis->lLen($fail_list), //失败存放的列表长度
-            'fail_list_10'   => $fail_list_10, //最新的10条记录
+            'mq_delay_10'    => $mq_delay_10,                     //最先执行的10个数据
+            'fail_list_len'  => $this->redis->lLen($fail_list),   //失败存放的列表长度
+            'fail_list_10'   => $fail_list_10,                    //最新的10条记录
         ];
     }
 
