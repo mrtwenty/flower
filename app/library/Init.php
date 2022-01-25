@@ -177,7 +177,7 @@ class Init
      */
     public function stop()
     {
-        $status = new Status($this->mq, $this->redis_config);
+        $status = new Status($this->mq, $this->redisConfig);
         $status->stop();
         // 运行worker
         Worker::runAll();
