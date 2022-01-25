@@ -65,6 +65,12 @@ class Init
         $status = new Status($mq, $redis_config);
         $status->start();
 
+        //linux下 ctrl+c,关掉标识符
+        Worker::$onMasterStop = function () use ($mq, $redis_config) {
+            $status = new Status($mq, $redis_config);
+            $status->stop();
+        };
+
         //启动多个消费者
         $worker       = new Worker();
         $worker->name = 'consumer';
@@ -95,6 +101,7 @@ class Init
                 });
             }
         }
+
 
         // 运行worker
         Worker::runAll();
