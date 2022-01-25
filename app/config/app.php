@@ -34,7 +34,8 @@ return [
     'flower' => [
         'mq' => [
             'name'            => env('mq.name', 'mq'),                # 消息队列名
-            'status'          => env('mq.status', 'mq_status'),       # 消息队列状态 
+            'status'          => env('mq.status', 'mq_status'),       # 消息队列状态
+            'status_driver'   => env('mq.status_driver', 'file'),     # 状态驱动
             'fail_list'       => env('mq.fail_list', 'mq_fail_list'), # 尝试多次后,记录到失败的队列
             'delay_name'      => env('mq.delay_name', 'mq_delay'),    # 延迟队列名
             'group_name'      => env('mq.group_name', 'mq_group'),    # 消费组名
