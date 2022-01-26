@@ -91,100 +91,12 @@ var_dump($res);
 
 ### 问题
 
-#### 1.引入MySQL
-
-可以安装此依赖包，当然也可以根据自己需要用别的包
-
-```shell
-composer require workerman/mysql
-```
-
-配置信息可以在.env里面写入: 
-
-```shell
-[mysql]
-host = 127.0.0.1
-username = root
-password = 123456
-database = test
-port     = 3306
-```
-
-代码实现:
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace app;
-
-use app\library\BaseInterface;
-
-/**
- * 消费类
- */
-class Run implements BaseInterface
-{
-    protected $db = null;
-
-    public function getDb()
-    {
-        if (is_null($this->db)) {
-            $config = config('mysql');
-            $host     = $config['host'];
-            $port     = $config['port'];
-            $user     = $config['username'];
-            $password = $config['password'];
-            $database  = $config['database'];
-            $this->db = new \Workerman\MySQL\Connection($host, $port, $user, $password, $database);
-        }
-        return $this->db;
-    }
-
-    /**
-     * 消费方法，如何消费，取决用户自己
-     *
-     * @param mixed $data
-     * @param mixed $id
-     * @return bool 返回true就会执行ack确认消息已消费
-     */
-    public function consumer($data, $id): bool
-    {
-        $db   = $this->getDb();
-        $info = $db->row("SELECT * FROM `short_url` WHERE id=3");
-        print_r($info);
-        return true;
-    }
-
-    /**
-     * 超过尝试的次数，就会写入失败队列里面，并调用此方法，可以用此方法通知运维
-     *
-     * @return void
-     */
-    public function fail($data, $id)
-    {
-        print_r($data);
-        print_r($id);
-    }
-}
-```
-#### 2. 避免内存泄露
-
-由于是守护进程，为了避免php业务代码bug隐藏的内存泄露，可以在消费者执行完一定数量的时候重启进程。具体实现请查看workerman手册。
-
-[链接1](https://www.workerman.net/doc/workerman/worker/stop-all.html)、[链接2](https://www.workerman.net/doc/workerman/faq/max-requests.html)
-#### 3. 失败重试不会触发
-
-请检查redis server的版本，注意是5.0.4 及以上，[5.0.3有个xClaim的bug](https://github.com/redis/redis/commit/f72f4ea311d31f7ce209218a96afb97490971d39)
-
-#### 4. 实现两个消息队列
-
-请查看源码demo1
-
-#### 5. 一个消息队列，多个消费组
-
-请查看源码demo2
+1. 两个消息队列，请查看demo1
+2. 一个消息队列，多个消费组, 查看demo2
+3. 性能测试，查看demo3
+4. 如何操作MySQL,查看demo4
+5. 如何避免内存泄露，由于是守护进程，业务代码bug隐藏的内存泄露，可以在消费者执行完一定数量的时候重启进程。具体实现请查看workerman手册。[链接1](https://www.workerman.net/doc/workerman/worker/stop-all.html)、[链接2](https://www.workerman.net/doc/workerman/faq/max-requests.html)
+6. 失败重试不会触发，请检查redis server的版本，注意是5.0.4 及以上，[5.0.3有个xClaim的bug](https://github.com/redis/redis/commit/f72f4ea311d31f7ce209218a96afb97490971d39)
 
 
 ### 相关资料
