@@ -12,7 +12,7 @@ return [
         'host' => env('redis.host', '127.0.0.1'),
         'auth' => env('redis.auth', '123456'),
         'database' => (int)env('redis.database', 0),
-        'port' => (int)env('redis.port', 3306),
+        'port' => (int)env('redis.port', 6379),
     ],
     'monitor' => [
         'socket'   => env('monitor.socket', 'http://0.0.0.0:8080'),

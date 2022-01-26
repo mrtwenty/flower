@@ -77,12 +77,8 @@ composer install mrtwenty/flower-client
 ```php
 $redis = new Redis;
 $redis->connect('127.0.0.1', 6379);
-//$mq需要与服务端三个配置信息相同
-$mq    = [
-    'name' => 'mq',
-    'delay_name' => 'mq_delay',
-    'fail_list' => 'mq_fail_list'
-];
+//$mq需要与服务端的配置信息相同
+$mq    = ['name' => 'mq','delay_name' => 'mq_delay'];
 $client = new Client($redis, $mq);
 
 //立即执行
@@ -181,6 +177,14 @@ class Run implements BaseInterface
 #### 3. 失败重试不会触发
 
 请检查redis server的版本，注意是5.0.4 及以上，[5.0.3有个xClaim的bug](https://github.com/redis/redis/commit/f72f4ea311d31f7ce209218a96afb97490971d39)
+
+#### 4. 实现两个消息队列
+
+请查看源码demo1
+
+#### 5. 一个消息队列，多个消费组
+
+请查看源码demo2
 
 
 ### 相关资料
