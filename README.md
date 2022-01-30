@@ -1,13 +1,13 @@
 # FlowerMQ
 
-FlowerMQ 一个基于Workerman和Redis实现的消息队列,一个小小工具，用来给主项目解耦的，也支持延迟队列，失败尝试这些。
+基于Workerman和Redis实现的消息队列,一个小工具，为项目提供异步执行，支持延迟队列，失败重试。
 
 ## 运行依赖
 
 - php7.2
-- Redis版本需要在`5.0.4`上，因为用到Redis的Stream数据类型
-- pecl依赖，redis扩展
-- composer依赖，workerman/workerman 4.0以上
+- Redis`5.0.4`上，因为用到Redis的Stream数据类型
+- pecl的redis扩展
+- composer包: workerman/workerman 4.0以上
 
 ## 安装
 
@@ -22,19 +22,11 @@ composer create-project mrtwenty/flower
 1. 下载或者 `git clone`
 2. 项目根目录执行命令，`composer install`
 
-## 原理说明
+## 服务端说明
 
-1. workerman实现消费端，开多个进程，在 onWorkerStart 函数里面，阻塞读取，阻塞间隔5秒后，就重新阻塞,因为是阻塞了，所以用了一个字符串key来处理停止的问题，每次阻塞5秒，就断开，以便判断是否需要终止程序。
-3. 可以随时停止消费端，因为客户端发送的消息都会存放redis stream 队列里面。
-4. 一个pending进程,每隔0.5秒检查是否有未ack的消息，并尝试消费掉
-5. 一个delay进程,负责处理延迟消息，利用redis的zset有序集合存储，起一个定时器，定时获取可以执行的消息，写入消费端
-6. 遵循约定大于配置的方式，直接用默认的即可。
-7. 默认配置是app目录下的config目录，如果需要更改配置项，可以在项目根目录下，提供一个.env的配置文件，替换掉
-7. 回收裁剪机制: 有三种模式，默认 **no** ，不做裁剪
-   1. no,不做裁剪，所有消息保留。
-   2. maxlen, 最大长度回收,概率性触发 `xtrim  maxlen mq ~ 长度` 。
-   3. minid,    最小已读消息回收，概率行触发，`xtrim minid mq ~ 消息id` ，需要 redis server 6.2.0 以上。
-
+1. 下载项目后，配置 .env。
+2. 编写业务逻辑，app\consumer\Run.php 只需要编写这里，记得做好异常和超时处理。
+3. 启动，php index.php start
 
 ### 可用命令
 
@@ -47,15 +39,9 @@ composer create-project mrtwenty/flower
 7. php index.php status         查看flower运行状态
 8. php monitor.php start      运行信息查看，会启动一个http进程
 
-> windows下仅限于开发，不适合做生产环境使用，启动需要开三个命令行窗口，执行 start、pending、delay命令
+> windows下仅限于开发，不适合做生产环境使用，启动需要开三个命令行窗口，分别执行 start、pending、delay命令
 
-#### 服务端说明
-
-1. 下载项目后，配置 .env 
-2. 编写业务逻辑，app\consumer\Run.php 只需要编写这里，如果代码有curl请求，记得要做好超时
-3. 启动，php index.php start 即可。
-
-### 客户端说明
+## 客户端说明
 
 flower配备了一个客户端，方便在别的项目中使用:
 
@@ -79,9 +65,16 @@ var_dump($res);
 $res = $client->add(['test' => 'data'], 3);
 var_dump($res);
 ```
-
-### 问题
-
+## 原理说明
+1. 多个consumer进程，在onWorkerStart 函数处，阻塞读取，超时5秒，判断是否需要停止。
+4. pending进程,每隔0.5秒检查是否有未ack的消息，并尝试消费掉
+5. delay进程,处理延迟消息，用redis的zset有序集合存储，定时获取可以执行的消息，写入消费端
+7. 配置是app/config/app.php，可以在项目根目录下，提供一个.env文件，替换默认配置
+7. 回收裁剪机制: 有三种模式，默认 **no** ，不做裁剪
+   1. no,不做裁剪，所有消息保留。
+   2. maxlen, 最大长度回收,概率性触发 `xtrim  maxlen mq ~ 长度` 。
+   3. minid,    最小已读消息回收，概率行触发，`xtrim minid mq ~ 消息id` ，需要 redis server 6.2.0 以上。
+## 问题
 1. 如何支持两个消息队列，请查看demo1
 2. 如何支持一个消息队列，多个消费组, 查看demo2
 3. 性能测试，查看demo3
@@ -93,16 +86,13 @@ var_dump($res);
 ```php
 date_default_timezone_set('PRC');
 ```
-
-
-### 相关资料
-
+## 相关资料
 1. [redis stream 手册](https://redis.io/commands/xack)  是redis stream命令的详细介绍。
 2. [redis streams简介](https://redis.io/topics/streams-intro)  是redis官网关于redis stream的介绍，在使用该项目前，建议详细阅读它。
 3. [pecl redis 文档](https://github.com/phpredis/phpredis)，  如何使用php操作redis的文档
 4. [workerman 手册](https://www.workerman.net/doc/workerman/)
 
-### 引用
+## 引用
 1. [monitor登录页模板](https://gitee.com/suiboyu/front_page_effect_collection)
 2. env、config类这些学自thinkphp
 3. monitor 后端的一些代码，学自webman
