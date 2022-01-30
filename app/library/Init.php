@@ -120,7 +120,7 @@ class Init
     {
         $redis = redis($redis_config, 'master');
         $server = $redis->info('server');
-        if (version_compare($server['redis_version'], '5.0.3', '<')) {
+        if (version_compare($server['redis_version'], '5.0.3', '<=')) {
             exit('redis server version must >= 5.0.4');
         }
     }
