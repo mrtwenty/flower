@@ -61,18 +61,19 @@ class Init
         $redis_config = $this->redisConfig;
         $mq           = $this->mq;
 
+        $this->check($redis_config);
+
         //标记启动
         $status = new Status($mq, $redis_config);
         $status->start();
 
-        //设置主进程名为消息队列名
-        Worker::$processTitle = $mq['name'];
-
         //linux下 ctrl+c,关掉标识符
-        Worker::$onMasterStop = function () use ($mq, $redis_config) {
-            $status = new Status($mq, $redis_config);
+        Worker::$onMasterStop = function () use ($status) {
             $status->stop();
         };
+
+        //设置主进程名为消息队列名
+        Worker::$processTitle = $mq['name'];
 
         //启动多个消费者
         $worker       = new Worker();
@@ -108,6 +109,20 @@ class Init
 
         // 运行worker
         Worker::runAll();
+    }
+
+    /**
+     * 检查redis版本
+     *
+     * @param array $redis_config
+     */
+    protected function check($redis_config)
+    {
+        $redis = redis($redis_config, 'master');
+        $server = $redis->info('server');
+        if (version_compare($server['redis_version'], '5.0.3', '<')) {
+            exit('redis server version must >= 5.0.4');
+        }
     }
 
     /**
