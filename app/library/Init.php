@@ -65,6 +65,9 @@ class Init
         $status = new Status($mq, $redis_config);
         $status->start();
 
+        //设置主进程名为消息队列名
+        Worker::$processTitle = $mq['name'];
+
         //linux下 ctrl+c,关掉标识符
         Worker::$onMasterStop = function () use ($mq, $redis_config) {
             $status = new Status($mq, $redis_config);
