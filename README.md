@@ -38,25 +38,16 @@ composer create-project mrtwenty/flower
 
 ### 可用命令
 
-#### win
-
-windows下仅限于开发，不适合做生产环境使用，启动需要开三个命令行窗口，执行 start、pending、delay命令
-
-1. php index.php start           启动消费队列
-2. php index.php pending     启动重试队列
-3. php index.php delay          启动延迟队列
+1. php index.php start           启动消费队列 (linux可加参数 -d，守护进程形式启动) 
+2. php index.php pending     启动重试队列 (win)
+3. php index.php delay          启动延迟队列 (win)
 4. php index.php test             测试，执行此命令会发送两个消息给服务，一个是即时消息，一个是延迟消息。
-5. php monitor.php start      运行信息查看，会启动一个http进程
+5. php index.php stop            强制停止,可能会导致消息未ack，建议附加参数 -g,会等子进程处理完后再关闭)
+6. php index.php config         查看配置信息
+7. php index.php status         查看flower运行状态
+8. php monitor.php start      运行信息查看，会启动一个http进程
 
-#### linux
-
-1. php index.php start        linux启动相当于执行了 start、pending、delay命令
-1. php index.php start -d   守护进程启动 
-2. php index.php stop         强制停止,可能会导致消息未ack，不建议使用
-3. php index.php stop -g     优雅停止 (不加参数-g会强制干掉子进程，加参数-g的话，会等子进程处理完后再关闭)
-4. php index.php config     查看配置信息
-5. php index.php test         测试，执行此命令会发送两个消息给服务，一个是即时消息，一个是延迟消息。
-6. php monitor.php start      运行信息查看，会启动一个http进程
+> windows下仅限于开发，不适合做生产环境使用，启动需要开三个命令行窗口，执行 start、pending、delay命令
 
 #### 服务端说明
 
