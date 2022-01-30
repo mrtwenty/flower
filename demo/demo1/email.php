@@ -6,8 +6,6 @@ use app\library\Init;
 require dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 require __DIR__ . '/consumer/Email.php';
 
-date_default_timezone_set('PRC');
-
 $redis_config = [
     'host' => '127.0.0.1',
     'auth' => '123456',

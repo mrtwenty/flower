@@ -4,8 +4,6 @@ use Flower\Client;
 
 require dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
-date_default_timezone_set('PRC');
-
 $redis_config = [
     'host' => '127.0.0.1',
     'auth'     => '123456',

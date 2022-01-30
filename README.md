@@ -91,12 +91,17 @@ var_dump($res);
 
 ### 问题
 
-1. 两个消息队列，请查看demo1
-2. 一个消息队列，多个消费组, 查看demo2
+1. 如何支持两个消息队列，请查看demo1
+2. 如何支持一个消息队列，多个消费组, 查看demo2
 3. 性能测试，查看demo3
 4. 如何操作MySQL,查看demo4
 5. 如何避免内存泄露，由于是守护进程，业务代码bug隐藏的内存泄露，可以在消费者执行完一定数量的时候重启进程。具体实现请查看workerman手册。[链接1](https://www.workerman.net/doc/workerman/worker/stop-all.html)、[链接2](https://www.workerman.net/doc/workerman/faq/max-requests.html)
-6. 失败重试不会触发，请检查redis server的版本，注意是5.0.4 及以上，[5.0.3有个xClaim的bug](https://github.com/redis/redis/commit/f72f4ea311d31f7ce209218a96afb97490971d39)
+6. 为啥需要Redis 5.0.4 及以上，[5.0.3有个xClaim的bug](https://github.com/redis/redis/commit/f72f4ea311d31f7ce209218a96afb97490971d39),不会触发消息转义加1的问题。
+7. 时间不对，因为系统没有设置默认时区，而这个应该开发者确定，可以在入口文件 index.php 和 monitor.php 里面写上:
+
+```php
+date_default_timezone_set('PRC');
+```
 
 
 ### 相关资料
