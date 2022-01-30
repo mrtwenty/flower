@@ -16,7 +16,7 @@ return [
     ],
     'monitor' => [
         'socket'   => env('monitor.socket', 'http://0.0.0.0:8080'),
-        'username' => env('monitor.username', 'admin'),
+        'username' => env('monitor.username', 'flower'),
         'password' => env('monitor.password', '123456'),
     ],
     # 公共配置

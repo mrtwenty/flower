@@ -54,9 +54,15 @@ class Action
         $redis = redis(config('redis'));
         $redis_info = $redis->info();
 
+        $session = $this->request->session();
+        $user_info = [
+            'username' => $session->get('username'),
+        ];
+
         return $this->view('index', [
             'sys_info' => $sys_info,
             'redis_info' => $redis_info,
+            'user_info' => $user_info,
         ]);
     }
 
@@ -67,11 +73,20 @@ class Action
         }
 
         $redis = redis(config('redis'));
-        $config = config('flower.mq');
+        $config = config('flower.mq') + config('flower_common');;
         $flower = new Flower($redis, $config);
         $info = $flower->info();
 
-        return $this->view('mq', ['config' => $config, 'info' => $info]);
+        $session = $this->request->session();
+        $user_info = [
+            'username' => $session->get('username'),
+        ];
+
+        return $this->view('mq', [
+            'config' => $config,     //配置信息
+            'info' => $info,         //redis信息
+            'user_info' => $user_info //登录信息
+        ]);
     }
 
     public function logout()
