@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/layui/css/layui.css">
-    <title>FlowerMQ</title>
+    <title>Flower MQ</title>
 </head>
 
 <body>
@@ -16,7 +16,7 @@
             <!-- 内容主体区域 -->
             <div style="padding: 15px;padding-bottom:50px;">
                 <blockquote class="layui-elem-quote layui-text">
-                    FlowerMQ是一个基于workerman和redis实现的消息队列小工具，用来实现代码解耦，异步执行。
+                    Flower MQ是一个基于workerman和redis实现的消息队列小工具，用来实现代码解耦，异步执行。
                     当前版本: 项目地址: <a href="https://github.com/mrtwenty/flower" target="_blank">https://github.com/mrtwenty/flower</a>
                 </blockquote>
                 <div class="layui-bg-gray" style="padding:15px;">
@@ -143,7 +143,7 @@
             </div>
         </div>
         <div class="layui-footer">
-            Flower Monitor
+            Flower MQ Monitor
         </div>
     </div>
     <script src="/layui/layui.js"></script>

@@ -63,6 +63,7 @@ class Action
             'sys_info' => $sys_info,
             'redis_info' => $redis_info,
             'user_info' => $user_info,
+            'mq_list'   => array_keys(config('flower')),
         ]);
     }
 
@@ -72,11 +73,14 @@ class Action
             return $this->location('login');
         }
 
+        //MQ信息
+        $mq_name = $this->request->get('name', 'mq');
         $redis = redis(config('redis'));
-        $config = config('flower.mq') + config('flower_common');;
+        $config = config('flower.' . $mq_name) + config('flower_common');;
         $flower = new Flower($redis, $config);
         $info = $flower->info();
 
+        //登录用户信息
         $session = $this->request->session();
         $user_info = [
             'username' => $session->get('username'),
@@ -85,7 +89,8 @@ class Action
         return $this->view('mq', [
             'config' => $config,     //配置信息
             'info' => $info,         //redis信息
-            'user_info' => $user_info //登录信息
+            'user_info' => $user_info, //登录信息
+            'mq_list'   => array_keys(config('flower')), //配置中的多个MQ
         ]);
     }
 

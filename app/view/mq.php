@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/layui/css/layui.css">
-    <title>FlowerMQ</title>
+    <title>Flower MQ</title>
 </head>
 
 <body>
@@ -15,6 +15,9 @@
         <div class="layui-body">
             <!-- 内容主体区域 -->
             <div style="padding: 15px;padding-bottom:50px;">
+                <blockquote class="layui-elem-quote layui-text">
+                    <?= strtoupper($config['name']); ?>队列的实时监控
+                </blockquote>
                 <div class="layui-bg-gray" style="padding:15px;">
                     <div class="layui-row layui-col-space15">
                         <div class="layui-col-md4">
@@ -194,7 +197,7 @@
             </div>
         </div>
         <div class="layui-footer">
-            Flower Monitor
+            Flower MQ Monitor
         </div>
     </div>
     <script src="/layui/layui.js"></script>

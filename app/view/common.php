@@ -1,5 +1,5 @@
 <div class="layui-header">
-    <div class="layui-logo layui-hide-xs layui-bg-black">FlowerMQ</div>
+    <div class="layui-logo layui-hide-xs layui-bg-black">Flower MQ</div>
     <ul class="layui-nav layui-layout-right">
         <li class="layui-nav-item layui-hide layui-show-md-inline-block">
             <a href="javascript:;">
@@ -17,7 +17,9 @@
         <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
         <ul class="layui-nav layui-nav-tree" lay-filter="test">
             <li class="layui-nav-item"><a href="/index">系统信息</a></li>
-            <li class="layui-nav-item"><a href="/mq">mq监控</a></li>
+            <?php foreach ($mq_list as $mq) { ?>
+                <li class="layui-nav-item"><a href="/mq?name=<?= $mq ?>"><?= strtoupper($mq); ?> 监控 </a></li>
+            <?php } ?>
         </ul>
     </div>
 </div>
