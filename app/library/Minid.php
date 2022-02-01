@@ -33,7 +33,6 @@ class Minid
         if ('0-0' === $minid) {
             return false;
         }
-        
         return $this->redis->rawCommand('xtrim', $this->mq, 'minid', '~', $minid);
     }
 
@@ -49,7 +48,8 @@ class Minid
         //取出有pending的组
         $pending = [];
         foreach ($groups as $item) {
-            $minid_hash[$item['last-delivered-id']] = 1;
+            $k = array_sum(explode('-', $item['last-delivered-id']));
+            $minid_hash[$k] = $item['last-delivered-id'];
             if ($item['pending'] !== 0) {
                 $pending[] = $item['name'];
             }
@@ -58,7 +58,8 @@ class Minid
         foreach ($pending as $group_name) {
             $temp = $this->redis->xpending($this->mq, $group_name);
             if ($temp[0] > 0) {
-                $minid_hash[$temp[1]] = 1; //最小ID
+                $k = array_sum(explode('-', $temp[1]));
+                $minid_hash[$k] = $temp[1]; //最小ID
             }
         }
         return $this->minidCompare($minid_hash);
@@ -73,26 +74,13 @@ class Minid
     protected function minidCompare($arr)
     {
         if (count($arr) == 1) {
-            return key($arr);
+            return array_pop($arr);
         }
 
-        $minid = array_map('intval', explode('-', key($arr)));
-        foreach ($arr as $k => $v) {
-            $temp = array_map('intval', explode('-', $k));
-
-            if ($temp[0] < $minid[0]) {
-                $minid = $temp;
-                continue;
-            }
-
-            if ($temp[0] > $minid[0]) {
-                continue;
-            }
-
-            if ($temp[1] < $minid[1]) {
-                $minid = $temp;
-            }
+        if (krsort($arr, SORT_NUMERIC)) {
+            return array_pop($arr);
         }
-        return implode('-', $minid);
+
+        return '0-0';
     }
 }

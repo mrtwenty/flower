@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace app\library\status;
 
 /**
- * 共享内存, start、stop、status
+ * 共享内存
  */
 class Shmop implements StatusInterface
 {

@@ -87,13 +87,16 @@ class Action
         ];
 
         return $this->view('mq', [
-            'config' => $config,     //配置信息
-            'info' => $info,         //redis信息
+            'config'    => $config,     //配置信息
+            'info'      => $info,         //redis信息
             'user_info' => $user_info, //登录信息
             'mq_list'   => array_keys(config('flower')), //配置中的多个MQ
         ]);
     }
 
+    /**
+     * 退出
+     */
     public function logout()
     {
         $session = $this->request->session();
@@ -116,7 +119,7 @@ class Action
     /**
      * 跳转
      *
-     * @param mixed $url 
+     * @param string $url 
      * @return Response
      */
     protected function location($url)

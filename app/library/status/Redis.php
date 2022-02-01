@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace app\library\status;
 
 /**
- * 
+ * redis key标识
  */
 class Redis implements StatusInterface
 {

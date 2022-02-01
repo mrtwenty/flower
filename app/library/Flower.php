@@ -267,15 +267,12 @@ class Flower
             return false;
         }
 
-        $is_run = $this->isGc();
-        if (!$is_run) {
+        if (!$this->isGc()) {
             return false;
         }
 
         if ('maxlen' === $mode) {
-            $mq_name = $this->mq['name'];
-            $mq_maxlen = $this->mq['maxlen'];
-            return $this->redis->xtrim($mq_name, $mq_maxlen, true);
+            return $this->redis->xtrim($this->mq['name'], $this->mq['maxlen'], true);
         }
 
         if ('minid' === $mode) {
