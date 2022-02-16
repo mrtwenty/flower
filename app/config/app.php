@@ -11,6 +11,7 @@ return [
     'redis' => [
         'host'     => env('redis.host', '127.0.0.1'),
         'auth'     => env('redis.auth', '123456'),
+        'socket'   => env('redis.socket',''),        # unix domain socket, 有值就优先
         'database' => (int)env('redis.database', 0),
         'port'     => (int)env('redis.port', 6379),
     ],

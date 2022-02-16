@@ -70,13 +70,17 @@ function redis($config, $key = 'slave')
     $redis_host = $config['host'];
     $redis_port = $config['port'];
     $redis_auth = $config['auth'];
+    $redis_socket = $config['socket'];
     $redis_db   = $config['database'];
 
     $redis = new \Redis();
-    if ($redis->connect($redis_host, $redis_port) !== true) {
+
+    try {
+        ''=== $redis_socket ? $redis->connect($redis_host, $redis_port,3):$redis->connect($redis_socket);
+    } catch(\RedisException $e){
         throw new \Exception("redis connect error", 1);
     }
-
+    
     //密码
     if ($redis_auth !== '' && $redis->auth($redis_auth) !== true) {
         throw new \Exception("redis auth error", 1);
