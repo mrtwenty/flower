@@ -72,8 +72,8 @@ class Init
             $status->stop();
         };
 
-        //设置主进程名为消息队列名
-        Worker::$processTitle = $mq['name'];
+        //设置主进程名为【 消息队列名-消费分组名 】
+        Worker::$processTitle = sprintf('%s-%s',$mq['name'],$mq['group_name']);
 
         //启动多个消费者
         $worker       = new Worker();
